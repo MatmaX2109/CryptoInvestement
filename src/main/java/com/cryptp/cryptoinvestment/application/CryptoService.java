@@ -2,17 +2,12 @@ package com.cryptp.cryptoinvestment.application;
 
 import com.cryptp.cryptoinvestment.domain.model.*;
 import com.cryptp.cryptoinvestment.util.ComparatorDoubleDescending;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
+import com.cryptp.cryptoinvestment.util.ReadCsv;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.*;
+import java.util.Date;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static com.cryptp.cryptoinvestment.util.DateComparison.isSameDayUsingInstant;
@@ -20,59 +15,41 @@ import static com.cryptp.cryptoinvestment.util.DateComparison.isSameDayUsingInst
 @RequiredArgsConstructor
 @Service
 public class CryptoService {
-
-    private final Environment env;
-    public String getSomeKey(final @NotNull CryptoEnum cryptoName){
-        return env.getProperty("crypto."+cryptoName.toString().toLowerCase());
-    }
-
+    private final ReadCsv readCsv;
     public TreeSet<CryptoNormalizedRange> parseAll(){
         return parseAll(null);
     }
-//    @Cacheable(value = "crypto", key = "#cryptoName")
     public CoinInfos parse(final CryptoEnum cryptoName){
         return parse(cryptoName, null);
     }
-
     public CoinInfos parse(final CryptoEnum cryptoName, final Date day){
 
         CryptoExtreme cryptoExtreme = new CryptoExtreme();
         CoinInfos coinInfos = CoinInfos.builder().extreme(cryptoExtreme).build();
 
-        try{
-            CSVReader reader=
-                    new CSVReaderBuilder(new FileReader(getSomeKey(cryptoName))).
-                            withSkipLines(1). // Skiping firstline as it is header
-                            build();
+        coinInfos.setList(readCsv.readCrypto(cryptoName).stream().map(data-> {
 
-            coinInfos.setList(reader.readAll().stream().map(data-> {
+                    Crypto crypto = Crypto.builder()
+                            .timestamp(data.getTimestamp())
+                            .symbol(data.getSymbol())
+                            .price(data.getPrice())
+                            .build();
 
-                        Crypto crypto =Crypto.builder()
-                                .timestamp(new Date(Long.parseLong(data[0])))
-                                .symbol(data[1])
-                                .price(Double.valueOf(data[2]))
-                                .build();
-
-                        if (day != null) {
-                            if (isSameDayUsingInstant(new Date(Long.parseLong(data[0])), (day))) {
-                                cryptoExtreme.update(crypto);
-                                return crypto;
-                            }
-                            return null;
+                    if (day != null) {
+                        if (isSameDayUsingInstant(data.getTimestamp(), (day))) {
+                            cryptoExtreme.update(crypto);
+                            return crypto;
                         }
+                        return null;
+                    }
 
-                        cryptoExtreme.update(crypto);
-                        return crypto;
-                    })
-                    .collect(Collectors.toList()));
+                    cryptoExtreme.update(crypto);
+                    return crypto;
+                })
+                .collect(Collectors.toList()));
 
-            return coinInfos;
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return coinInfos;
     }
-
     public TreeSet<CryptoNormalizedRange> parseAll(final Date day){
 
         TreeSet<CryptoNormalizedRange> cryptoNormalizedRangeTreeSet = new TreeSet<>(new ComparatorDoubleDescending());
@@ -83,8 +60,6 @@ public class CryptoService {
 
             cryptoNormalizedRangeTreeSet.add(CryptoNormalizedRange.builder().cryptoEnum(e).normalizedRange(normalizedRange).build());
         }
-
         return cryptoNormalizedRangeTreeSet;
     }
-
 }

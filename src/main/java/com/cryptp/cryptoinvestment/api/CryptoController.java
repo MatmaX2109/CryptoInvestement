@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Date;
 import java.util.TreeSet;
@@ -21,18 +22,17 @@ public class CryptoController {
 
     private final CryptoService cryptoService;
 
-    @GetMapping("/getDescendingList")
-    public ResponseEntity<TreeSet<CryptoNormalizedRange>> getDescendingList(){
+    @GetMapping("/getDescendingNormRangeList")
+    public ResponseEntity<TreeSet<CryptoNormalizedRange>> getDescendingNormRangeList(){
         return new ResponseEntity<>(cryptoService.parseAll(), HttpStatus.OK);
     }
     @GetMapping("/getExtreme/{crypto}")
     public ResponseEntity<CryptoExtreme> getExtreme(@PathVariable("crypto") CryptoEnum cryptoEnum){
-        cryptoService.parse(cryptoEnum).getExtreme();
         return new ResponseEntity<>(cryptoService.parse(cryptoEnum).getExtreme(), HttpStatus.OK);
     }
 
-    @GetMapping("/getByDay/{day}")
-    public ResponseEntity<CryptoNormalizedRange> getExtreme(@PathVariable("day") @DateTimeFormat(pattern = "yyyy-MM-dd") Date day){
+    @GetMapping("/getHighNormRange/{day}")
+    public ResponseEntity<CryptoNormalizedRange> getHighNormRange(@PathVariable("day") @DateTimeFormat(pattern = "yyyy-MM-dd") Date day){
         return new ResponseEntity<>(cryptoService.parseAll(day).first(), HttpStatus.OK);
     }
 }
