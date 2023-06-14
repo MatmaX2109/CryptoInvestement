@@ -11,13 +11,10 @@ import org.springframework.web.context.request.WebRequest;
 @ControllerAdvice
 public class CustomControllerAdvice {
 
-    @ExceptionHandler(value= { HttpClientErrorException.BadRequest.class})
+    @ExceptionHandler(value= { HttpClientErrorException.BadRequest.class, RuntimeException.class})
     protected ResponseEntity<Object> handleConflict(
             RuntimeException ex, WebRequest request) {
         String bodyOfResponse = "This should be application specific";
-        ErrorDetails errorDetails = ErrorDetails.builder()
-                .msg(bodyOfResponse)
-                .build();
-        return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorDetails(bodyOfResponse), HttpStatus.BAD_REQUEST);
     }
 }
