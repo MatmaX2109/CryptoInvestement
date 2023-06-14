@@ -1,0 +1,7 @@
+crypto:
+  btc: src/main/resources/static/BTC_values.csv
+  doge: src/main/resources/static/DOGE_values.csv
+  eth: src/main/resources/static/ETH_values.csv
+  ltc: src/main/resources/static/LTC_values.csv
+  xrp: src/main/resources/static/XRP_values.csv
+
