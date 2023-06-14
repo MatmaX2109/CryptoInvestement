@@ -1,7 +1,6 @@
 package com.cryptp.cryptoinvestment.api;
 
 import com.cryptp.cryptoinvestment.application.CryptoService;
-import com.cryptp.cryptoinvestment.domain.model.CoinInfos;
 import com.cryptp.cryptoinvestment.domain.model.CryptoEnum;
 import com.cryptp.cryptoinvestment.domain.model.CryptoExtreme;
 import com.cryptp.cryptoinvestment.domain.model.CryptoNormalizedRange;
@@ -28,6 +27,7 @@ public class CryptoController {
     }
     @GetMapping("/getExtreme/{crypto}")
     public ResponseEntity<CryptoExtreme> getExtreme(@PathVariable("crypto") CryptoEnum cryptoEnum){
+        cryptoService.parse(cryptoEnum).getExtreme();
         return new ResponseEntity<>(cryptoService.parse(cryptoEnum).getExtreme(), HttpStatus.OK);
     }
 

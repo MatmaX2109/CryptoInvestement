@@ -6,6 +6,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class CryptoService {
     public TreeSet<CryptoNormalizedRange> parseAll(){
         return parseAll(null);
     }
-
+//    @Cacheable(value = "crypto", key = "#cryptoName")
     public CoinInfos parse(final CryptoEnum cryptoName){
         return parse(cryptoName, null);
     }
