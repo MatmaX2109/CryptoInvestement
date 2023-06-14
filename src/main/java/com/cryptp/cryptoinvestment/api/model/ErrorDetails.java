@@ -8,7 +8,7 @@ import java.util.Date;
 public class ErrorDetails {
     public ErrorDetails(String msg) {
         this.msg = msg;
-        this.timestamp = new Date()
+        this.timestamp = new Date();
     }
 
     private Date timestamp;
