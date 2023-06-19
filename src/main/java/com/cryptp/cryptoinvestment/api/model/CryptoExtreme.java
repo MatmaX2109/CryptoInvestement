@@ -1,5 +1,6 @@
-package com.cryptp.cryptoinvestment.domain.model;
+package com.cryptp.cryptoinvestment.api.model;
 
+import com.cryptp.cryptoinvestment.domain.model.Crypto;
 import lombok.Data;
 
 @Data

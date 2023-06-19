@@ -1,6 +1,6 @@
 package com.cryptp.cryptoinvestment.util;
 
-import com.cryptp.cryptoinvestment.domain.model.CryptoNormalizedRange;
+import com.cryptp.cryptoinvestment.api.model.CryptoNormalizedRange;
 
 import java.util.Comparator;
 

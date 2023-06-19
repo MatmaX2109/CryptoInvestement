@@ -1,13 +1,11 @@
 package com.cryptp.cryptoinvestment.util;
 
 import com.cryptp.cryptoinvestment.domain.model.Crypto;
-import com.cryptp.cryptoinvestment.domain.model.CryptoEnum;
+import com.cryptp.cryptoinvestment.domain.model.CryptoPath;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.io.FileReader;
@@ -20,19 +18,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReadCsv {
 
-    private final Environment env;
-    private String getSomeKey(final @NotNull CryptoEnum cryptoName){
-        return env.getProperty("crypto."+cryptoName.toString().toLowerCase());
-    }
-    @Cacheable(value = "crypto", key = "#cryptoName")
-    public List<Crypto> readCrypto(final CryptoEnum cryptoName){
+    @Cacheable(value = "crypto", key = "#cryptoPath")
+    public List<Crypto> readCrypto(final CryptoPath cryptoPath){
 
         List<Crypto> cryptoList;
 
         try {
 
             CSVReader reader =
-                    new CSVReaderBuilder(new FileReader(getSomeKey(cryptoName))).
+                    new CSVReaderBuilder(new FileReader(cryptoPath.getUrl())).
                             withSkipLines(1). // Skiping firstline as it is header
                             build();
 

@@ -1,6 +1,10 @@
-package com.cryptp.cryptoinvestment.application;
+package com.cryptp.cryptoinvestment.application.service;
 
-import com.cryptp.cryptoinvestment.domain.model.*;
+import com.cryptp.cryptoinvestment.api.model.CryptoExtreme;
+import com.cryptp.cryptoinvestment.api.model.CryptoNormalizedRange;
+import com.cryptp.cryptoinvestment.domain.model.CoinInfos;
+import com.cryptp.cryptoinvestment.domain.model.Crypto;
+import com.cryptp.cryptoinvestment.domain.model.CryptoPath;
 import com.cryptp.cryptoinvestment.util.ComparatorDoubleDescending;
 import com.cryptp.cryptoinvestment.util.ReadCsv;
 import lombok.RequiredArgsConstructor;
@@ -16,18 +20,23 @@ import static com.cryptp.cryptoinvestment.util.DateComparison.isSameDayUsingInst
 @Service
 public class CryptoService {
     private final ReadCsv readCsv;
-    public TreeSet<CryptoNormalizedRange> parseAll(){
-        return parseAll(null);
+
+    private final CryptoPathService cryptoPathService;
+
+    public TreeSet<CryptoNormalizedRange> getAllCryptoNormalized(){
+        return getAllCryptoNormalized(null);
     }
-    public CoinInfos parse(final CryptoEnum cryptoName){
+    public CoinInfos parse(final String cryptoName){
         return parse(cryptoName, null);
     }
-    public CoinInfos parse(final CryptoEnum cryptoName, final Date day){
+    public CoinInfos parse(final String cryptoName, final Date day){
+
+        CryptoPath cryptoPath = cryptoPathService.find(cryptoName);
 
         CryptoExtreme cryptoExtreme = new CryptoExtreme();
         CoinInfos coinInfos = CoinInfos.builder().extreme(cryptoExtreme).build();
 
-        coinInfos.setList(readCsv.readCrypto(cryptoName).stream().map(data-> {
+        coinInfos.setList(readCsv.readCrypto(cryptoPath).stream().map(data-> {
 
                     Crypto crypto = Crypto.builder()
                             .timestamp(data.getTimestamp())
@@ -50,15 +59,15 @@ public class CryptoService {
 
         return coinInfos;
     }
-    public TreeSet<CryptoNormalizedRange> parseAll(final Date day){
+    public TreeSet<CryptoNormalizedRange> getAllCryptoNormalized(final Date day){
 
         TreeSet<CryptoNormalizedRange> cryptoNormalizedRangeTreeSet = new TreeSet<>(new ComparatorDoubleDescending());
 
-        for(CryptoEnum e : CryptoEnum.values()){
-            CoinInfos coinInfos = parse(e, day);
+        for(CryptoPath e : cryptoPathService.findAll()){
+            CoinInfos coinInfos = parse(e.getSymbol(), day);
             double normalizedRange = (coinInfos.getExtreme().getMaxValue().getPrice() - coinInfos.getExtreme().getMinValue().getPrice()) / coinInfos.getExtreme().getMinValue().getPrice();
 
-            cryptoNormalizedRangeTreeSet.add(CryptoNormalizedRange.builder().cryptoEnum(e).normalizedRange(normalizedRange).build());
+            cryptoNormalizedRangeTreeSet.add(CryptoNormalizedRange.builder().cryptoSymbol(e.getSymbol()).normalizedRange(normalizedRange).build());
         }
         return cryptoNormalizedRangeTreeSet;
     }

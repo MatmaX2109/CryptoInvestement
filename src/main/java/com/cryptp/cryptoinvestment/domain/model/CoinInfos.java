@@ -1,5 +1,6 @@
 package com.cryptp.cryptoinvestment.domain.model;
 
+import com.cryptp.cryptoinvestment.api.model.CryptoExtreme;
 import lombok.Builder;
 import lombok.Data;
 

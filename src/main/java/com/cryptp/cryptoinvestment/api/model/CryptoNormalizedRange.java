@@ -1,4 +1,4 @@
-package com.cryptp.cryptoinvestment.domain.model;
+package com.cryptp.cryptoinvestment.api.model;
 
 import lombok.Builder;
 import lombok.Data;
@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class CryptoNormalizedRange {
-    private CryptoEnum cryptoEnum;
+    private String cryptoSymbol;
     private Double normalizedRange;
 }

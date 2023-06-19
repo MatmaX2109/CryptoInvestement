@@ -1,20 +1,17 @@
-package com.cryptp.cryptoinvestment.api;
+package com.cryptp.cryptoinvestment.api.exception;
 
-import com.cryptp.cryptoinvestment.api.model.ErrorDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
 public class CustomControllerAdvice {
 
-    @ExceptionHandler(value= { HttpClientErrorException.BadRequest.class, RuntimeException.class})
+    @ExceptionHandler(value= {CryptoSymbolException.class})
     protected ResponseEntity<Object> handleConflict(
             RuntimeException ex, WebRequest request) {
-        String bodyOfResponse = "This should be application specific";
-        return new ResponseEntity<>(new ErrorDetails(bodyOfResponse), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorDetails(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,4 +1,4 @@
-package com.cryptp.cryptoinvestment.api.model;
+package com.cryptp.cryptoinvestment.api.exception;
 
 import lombok.Getter;
 

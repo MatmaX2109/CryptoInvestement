@@ -5,3 +5,18 @@ crypto:
   ltc: src/main/resources/static/LTC_values.csv
   xrp: src/main/resources/static/XRP_values.csv
 
+spring:
+  sql:
+    init:
+      mode: always
+  datasource:
+    url: jdbc:h2:mem:mydb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+  h2:
+    console.enabled: true
