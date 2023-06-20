@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,6 @@ import static com.cryptp.cryptoinvestment.util.DateComparison.isSameDayUsingInst
 @Service
 public class CryptoService {
     private final ReadCsv readCsv;
-
     private final CryptoPathService cryptoPathService;
 
     public TreeSet<CryptoNormalizedRange> getAllCryptoNormalized(){
@@ -38,23 +38,14 @@ public class CryptoService {
 
         coinInfos.setList(readCsv.readCrypto(cryptoPath).stream().map(data-> {
 
-                    Crypto crypto = Crypto.builder()
-                            .timestamp(data.getTimestamp())
-                            .symbol(data.getSymbol())
-                            .price(data.getPrice())
-                            .build();
-
-                    if (day != null) {
-                        if (isSameDayUsingInstant(data.getTimestamp(), (day))) {
-                            cryptoExtreme.update(crypto);
-                            return crypto;
-                        }
+                    if (day != null && !isSameDayUsingInstant(data.getTimestamp(), (day))) {
                         return null;
                     }
 
-                    cryptoExtreme.update(crypto);
-                    return crypto;
+                    cryptoExtreme.update(data);
+                    return data;
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
 
         return coinInfos;

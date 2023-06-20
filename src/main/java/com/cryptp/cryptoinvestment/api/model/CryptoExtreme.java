@@ -1,9 +1,13 @@
 package com.cryptp.cryptoinvestment.api.model;
 
 import com.cryptp.cryptoinvestment.domain.model.Crypto;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Setter
+@Getter
 public class CryptoExtreme {
 
     private Crypto oldest;
